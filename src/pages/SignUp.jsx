@@ -1,8 +1,10 @@
 import React from 'react'
 import { useState } from "react";
 import { FaEyeSlash , FaEye } from "react-icons/fa6";
-import {Link} from "react-router-dom"
+import {Await, Link} from "react-router-dom"
 import OAuth from '../components/OAuth';
+import {getAuth , createUserWithEmailAndPassword} from "firebase/auth"
+import {db} from "../firebase"
 
 export default function SignUp() {
 const [showPassword , setShowPassword] = useState(false)
@@ -20,6 +22,21 @@ function onChange (e){
   }));
 }
 
+async function onSubmit(e){
+  e.preventDefault();
+
+  try {
+    const auth = getAuth()
+    const userCredential = await createUserWithEmailAndPassword(auth ,  email , password)
+    const user = userCredential.user
+    console.log(user)
+  } catch (error) {
+    console.log(error)
+
+  }
+}
+
+
   return (
     <section>
      <h1 className="text-3xl text-center mt-6 font-bold">Sign Up</h1>
@@ -29,9 +46,9 @@ function onChange (e){
         </div>
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20" >
           {/* Form */}
-          <form> 
+          <form onSubmit={onSubmit}> 
           {/* User Input */}
-          <input type="text" id="fullName" value={name} className="mb-3 w-full px-4 py-2 text-xl text-gray-700 bg-white  border-gray-300 rounded transition ease-in-out" placeholder="Full name" onChange={onChange}/>
+          <input type="text" id="name" value={name} className="w-full px-4 mb-3 py-2 text-xl text-gray-700 bg-white  border-gray-300 rounded transition ease-in-out" placeholder="Full Name" onChange={onChange}/>
           <input type="email" id="email" value={email} className="w-full px-4 py-2 text-xl text-gray-700 bg-white  border-gray-300 rounded transition ease-in-out" placeholder="Email address" onChange={onChange}/>
           <div className="relative mb-6">
           <input type={showPassword ? "text" : "password"} id="password" value={password} className="w-full mt-3 px-4 py-2 rounded text-xl border-gray-300 text-gray-700 bg-white transition ease-in-out" placeholder="Password" onChange={onChange}/>
